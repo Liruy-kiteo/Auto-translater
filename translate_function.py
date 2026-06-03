@@ -40,7 +40,30 @@ class Translate():
        return ImageGrab.grabclipboard()
       except:
        return None
+      
+    def original_text(self):
+      '''
+      Функция возвращает исходный текст с изображения
+      '''
+      #дальнейший код сработает только в том случае если в clipboard последним файлом было сохранено изображение
+      try:
+      
+       #берет последнее изобра ение из clipboard, 
+       self.img = ImageGrab.grabclipboard()
 
+       #переводит изображение в формат который читает tesseract, нужен для того чтобы pytesseract мог работать с alt+prtsc
+       #из-за того что он сохраняет данные в bitmap(если не ошибаюсь), а не png
+       self.text_from_img = self.img.convert("RGB")
+
+       #переводит изображение в текст
+       self.text = pytesseract.image_to_string(self.text_from_img, lang='jpn') 
+
+       #возвращает текст в картинке
+       return self.text
+     
+      #если в clipboard не было изображения, то функция выдаёт ошибку ValueError
+      except:
+       return ValueError
 if __name__ == '__main__':
    Translate()
 
