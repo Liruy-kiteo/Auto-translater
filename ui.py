@@ -31,7 +31,7 @@ class UI():
 
         #основные картежи для данных о ui
         self.rectangles_coordinates = [(50, 30, 950, 280), (50, 320, 950, 570)]
-        self.buttons_data = [('icons/author.png', 24, 30, 40, self.placeholder),('icons/download.png', 977, 540, 40, self.download_text),('icons/settings.png', 977, 30, 40, self.placeholder),("icons/copy_photo.png", 480, 170, 60, self.image_place_thread)]
+        self.buttons_data = [('icons/download.png', 977, 250, 40, self.download_original_text),('icons/author.png', 24, 30, 40, self.placeholder),('icons/download.png', 977, 540, 40, self.download_translated_text),('icons/settings.png', 977, 30, 40, self.placeholder),("icons/copy_photo.png", 480, 170, 60, self.image_place_thread)]
 
         #цикл итерирует все линии в приложении
         for x1,y1,x2,y2 in self.rectangles_coordinates:
@@ -97,9 +97,9 @@ class UI():
        '''
        return None
     
-    def download_text(self):
+    def download_translated_text(self):
       '''
-      Создаёт и открывает в блокноте весь текст, что был скопирован
+      Создаёт и открывает в блокноте весь текст, что был скопирован и переведён
       '''
       try:
         
@@ -110,7 +110,20 @@ class UI():
 
       except:
          return None
+      
+    def download_original_text(self): 
+      '''
+      Создаёт и открывает в блокноте весь текст, что был скопирован
+      '''
+      try:
+        self.original_text=Translate.original_text(self)
+        #Открывает текстовый файл и записывает его, потом открывает в блокноте
+        with open('text.txt', 'w+', encoding='utf-8') as file:
+          file.write(self.original_text)
+          os.startfile('text.txt')
 
+      except:
+         return None
 
 if __name__=='__main__':
     UI()
