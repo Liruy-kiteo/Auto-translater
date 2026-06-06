@@ -4,8 +4,8 @@ from translate_function import Translate
 import threading
 import time
 import os
-
-class UI():
+from toplevel_windows import TopLevelSettings
+class UI(TopLevelSettings):
     def __init__(self):
 
         #---------------Характеристики основного окна-----------------------
@@ -14,16 +14,48 @@ class UI():
         self.root.title('АвтоПереводчик')
         self.root.resizable(width=False, height=False)
         self.root.configure(bg='#000000')
-
         #---------------Создание площади для рисования(Canvas)--------------
         self.canvas = ctk.CTkCanvas(bg='#000000', width=1100, height=700,borderwidth=4, highlightthickness=0)
         self.canvas.pack(anchor='center')
 
         #----------------функции для отрисовки приложения-------------------
+        self.settings_adjusments()
         self.lines_buttons()
         self.root.mainloop() 
 
+        #-------------------Записывание настроек в переменные---------------
 
+    #загружает настройки языка и цвета текста, работают только после перезагрузки
+    def settings_adjusments(self):
+        '''
+        Загружает данные из текстового файла, если его нет, то подставляет свои данные
+        Работает только после каждого перезапуска
+        '''
+        #блок try except чтобы избежать ошибок
+        try:
+
+         #загружает данные из файла
+         with open('settings.txt','r+') as data:
+                  self.data_settings = data.readlines()
+
+         self.language_in_app = self.data_settings[0]
+         #удаляет символ переноса строки
+         self.language_in_app = self.language_in_app[:-1]
+         self.text_color_in_app = self.data_settings[1] 
+
+        except:
+           #белый цвет текста и английский язык
+           self.language_in_app = 'eng'
+           self.text_color_in_app = '#FFFFFF'
+
+    #загружает дополнительное окно при нажатии на кнопку настроек
+    def settings_window_open(self):
+       '''
+       Загружает дополнительное окно
+       '''
+       TopLevelSettings.__init__(self)  
+
+    #Прорисовывает все элементы
     def lines_buttons(self):
         '''
         Отрисовывает главные параметры приложения, линии и кнопки, также задаёт им команды
@@ -31,7 +63,7 @@ class UI():
 
         #основные картежи для данных о ui
         self.rectangles_coordinates = [(50, 30, 950, 280), (50, 320, 950, 570)]
-        self.buttons_data = [('icons/download.png', 977, 250, 40, self.download_original_text),('icons/author.png', 24, 30, 40, self.placeholder),('icons/download.png', 977, 540, 40, self.download_translated_text),('icons/settings.png', 977, 30, 40, self.placeholder),("icons/copy_photo.png", 480, 170, 60, self.image_place_thread)]
+        self.buttons_data = [('icons/download.png', 977, 250, 40, self.download_original_text),('icons/author.png', 24, 30, 40, self.placeholder),('icons/download.png', 977, 540, 40, self.download_translated_text),('icons/settings.png', 977, 30, 40, self.settings_window_open),("icons/copy_photo.png", 480, 170, 60, self.image_place_thread)]
 
         #цикл итерирует все линии в приложении
         for x1,y1,x2,y2 in self.rectangles_coordinates:
@@ -44,8 +76,9 @@ class UI():
            self.canvas.create_window(x1,y1,window=self.buttons)
 
         #просто команда для текста по центру(было бы расточительством тратить её на цикл)
-        self.canvas.create_text(495,110,font=('Comic Neue','22',),fill='#9900ff',activefill='#9900ff',text='Скопируйте своё изображение')
+        self.canvas.create_text(495,110,font=('Comic Neue','22',),fill=self.text_color_in_app,activefill=self.text_color_in_app,text='Скопируйте своё изображение')
 
+    #запускает поток для проверки приложения
     def image_place_thread(self):
        '''
        Запускает отдельный поток для функции image_place
@@ -54,6 +87,7 @@ class UI():
        self.image_thead = threading.Thread(target=self.image_place)
        self.image_thead.start()
 
+    #загружает изображение в первый отдел
     def image_place(self):
        '''
        Функция получает данные о последнем скопированом изображении, дальше отображает в первом блоке изображение, а во втором перевод с текстом
@@ -62,19 +96,20 @@ class UI():
        #флаг состояния, чтобы приложение не копировало много раз одну и туже проверку
        self.previous_image = 0
        #заготавливается виджет текста для переведённого текста из изображения
-       self.already_translated_text=ctk.CTkLabel(master=self.root,text='',fg_color='#000000',text_color='#9900ff',font=('Comic Sans',16))
+       self.already_translated_text=ctk.CTkLabel(master=self.root,text='',fg_color='#000000',text_color=self.text_color_in_app,font=('Comic Sans',16))
        self.canvas.create_window(500,445,window=self.already_translated_text,anchor='center',width=890, height=240)
 
        #цикл который бесконечно проверяет наличие изображения, а затем выводит его перевод
        while True:
+         
           #таймер, чтобы проверка не была слишком частой
-          time.sleep(3)
+         time.sleep(3)
 
           #Если последнии скопированные в буфер обмена данные не являются изображением, то функция начинает всё сначала
-          try:
+         try:
            #берётся изображение из буфера обмена, затем идёт проверка, если оно совпадёт с последним, то дальнейший  код не случится(оптимизация)
-           self.img_from_clipboard = Translate.image_grab(self)
-           if self.img_from_clipboard != self.previous_image:
+          self.img_from_clipboard = Translate.image_grab(self)
+          if self.img_from_clipboard != self.previous_image:
             #Возвращается изображение и обрабатывается, дальше вставляется в виджет label чтобы его отобразить
             self.converted_image = ctk.CTkImage(dark_image=self.img_from_clipboard,size=(891,240))
             self.image_first_box = ctk.CTkLabel(master=self.root,image=self.converted_image,width=891,height=240,text='')
@@ -82,13 +117,12 @@ class UI():
             #скопированное изображение записывается, чтобы совершить проверку в следующий раз
             self.previous_image = self.img_from_clipboard
             #берётся текст из изображения, затем вставляется в заранее заготовленный виджет
-            self.translated_text = Translate.translate_return(self)
+            self.translated_text = Translate.translate_return(self, self.language_in_app)
             self.already_translated_text.configure(text=self.translated_text)
             #виджет обновляется
             self.already_translated_text.update()
-
-          except:
-             continue
+         except:
+          return None
           
     #фукнция чтобы заменить некоторые нерабочии кнопки
     def placeholder(self):
@@ -97,6 +131,7 @@ class UI():
        '''
        return None
     
+    #загружает уже переведённый текст в блокнот
     def download_translated_text(self):
       '''
       Создаёт и открывает в блокноте весь текст, что был скопирован и переведён
@@ -111,12 +146,13 @@ class UI():
       except:
          return None
       
+    #открывает текст с фотографии
     def download_original_text(self): 
       '''
       Создаёт и открывает в блокноте весь текст, что был скопирован
       '''
       try:
-        self.original_text=Translate.original_text(self)
+        self.original_text=Translate.original_text(self, self.language_in_app)
         #Открывает текстовый файл и записывает его, потом открывает в блокноте
         with open('text.txt', 'w+', encoding='utf-8') as file:
           file.write(self.original_text)
@@ -124,6 +160,7 @@ class UI():
 
       except:
          return None
+
 
 if __name__=='__main__':
     UI()
