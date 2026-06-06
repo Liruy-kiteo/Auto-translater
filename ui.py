@@ -5,7 +5,8 @@ import threading
 import time
 import os
 from toplevel_windows import TopLevelSettings
-class UI(TopLevelSettings):
+from author import TopLevelAuthor
+class UI(TopLevelSettings, TopLevelAuthor):
     def __init__(self):
 
         #---------------Характеристики основного окна-----------------------
@@ -55,6 +56,12 @@ class UI(TopLevelSettings):
        '''
        TopLevelSettings.__init__(self)  
 
+    def author_window_open(self):
+       '''
+       Загружает окно с автором
+       '''
+       TopLevelAuthor.__init__(self)
+
     #Прорисовывает все элементы
     def lines_buttons(self):
         '''
@@ -63,7 +70,7 @@ class UI(TopLevelSettings):
 
         #основные картежи для данных о ui
         self.rectangles_coordinates = [(50, 30, 950, 280), (50, 320, 950, 570)]
-        self.buttons_data = [('icons/download.png', 977, 250, 40, self.download_original_text),('icons/author.png', 24, 30, 40, self.placeholder),('icons/download.png', 977, 540, 40, self.download_translated_text),('icons/settings.png', 977, 30, 40, self.settings_window_open),("icons/copy_photo.png", 480, 170, 60, self.image_place_thread)]
+        self.buttons_data = [('icons/download.png', 977, 250, 40, self.download_original_text),('icons/author.png', 24, 30, 40, self.author_window_open),('icons/download.png', 977, 540, 40, self.download_translated_text),('icons/settings.png', 977, 30, 40, self.settings_window_open),("icons/copy_photo.png", 480, 170, 60, self.image_place_thread)]
 
         #цикл итерирует все линии в приложении
         for x1,y1,x2,y2 in self.rectangles_coordinates:
