@@ -83,7 +83,7 @@ class UI(TopLevelSettings, TopLevelAuthor):
            self.canvas.create_window(x1,y1,window=self.buttons)
 
         #просто команда для текста по центру(было бы расточительством тратить её на цикл)
-        self.canvas.create_text(495,110,font=('Comic Neue','22',),fill=self.text_color_in_app,activefill=self.text_color_in_app,text='Скопируйте своё изображение')
+        self.canvas.create_text(495,110,font=('Comic Neue','22',),fill=self.text_color_in_app,activefill=self.text_color_in_app,text=f'Скопируйте своё изображение({self.language_in_app})')
 
     #запускает поток для проверки приложения
     def image_place_thread(self):
