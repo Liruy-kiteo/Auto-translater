@@ -5,12 +5,12 @@ from deep_translator import GoogleTranslator
 
 #класс определяет главную функцию(перевод с картинки)
 class Translate():
-    def translate_return(self):
+    def translate_return(self, language_on_image):
 
      #дальнейший код сработает только в том случае если в clipboard последним файлом было сохранено изображение
+
      try:
-      
-      #берет последнее изображение из clipboard, 
+      #берет последнее изображение из clipboard
       self.img = ImageGrab.grabclipboard()
 
       #переводит изображение в формат который читает tesseract, нужен для того чтобы pytesseract мог работать с alt+prtsc
@@ -18,7 +18,7 @@ class Translate():
       self.text_from_img = self.img.convert("RGB")
 
       #переводит изображение в текст
-      self.text = pytesseract.image_to_string(self.text_from_img, lang='jpn') 
+      self.text = pytesseract.image_to_string(self.text_from_img, lang=f"{language_on_image}") 
 
       #переводит текст на русский, определяет его автоматически(по сути обращается в google translate, как request, но проще)
       translator = GoogleTranslator(source='auto', target='ru')
@@ -26,10 +26,10 @@ class Translate():
 
       #возвращает перевод текста в картинке
       return result
-     
-     #если в clipboard не было изображения, то функция выдаёт ошибку ValueError
      except:
-       return ValueError
+      return None
+     #если в clipboard не было изображения, то функция выдаёт ошибку ValueError
+
     
     def image_grab(self):
       '''
@@ -41,7 +41,7 @@ class Translate():
       except:
        return None
       
-    def original_text(self):
+    def original_text(self, language_on_image):
       '''
       Функция возвращает исходный текст с изображения
       '''
@@ -56,7 +56,7 @@ class Translate():
        self.text_from_img = self.img.convert("RGB")
 
        #переводит изображение в текст
-       self.text = pytesseract.image_to_string(self.text_from_img, lang='jpn') 
+       self.text = pytesseract.image_to_string(self.text_from_img, lang=f'{language_on_image}') 
 
        #возвращает текст в картинке
        return self.text
@@ -64,6 +64,7 @@ class Translate():
       #если в clipboard не было изображения, то функция выдаёт ошибку ValueError
       except:
        return ValueError
+      
 if __name__ == '__main__':
    Translate()
 
