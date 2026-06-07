@@ -29,8 +29,9 @@ class TopLevelSettings():
          self.text_color = self.data_settings[1]
         #если не получилось, создаёт свои переменные для цвета текста и языка
         except:
-             self.language = 'eng'
-             self.text_color = '#ffffff'
+         self.language = 'eng'
+         self.text_color = '#ffffff'
+         print(self.language)
 
         #проверяет цвет текста, чтобы не записывать его хеш кодом, для пользователя так будет удобнее(пока только 2 цвета, белый и фиолетовый)
         if self.text_color == '#ffffff' or self.text_color == '#FFFFFF':
@@ -68,9 +69,10 @@ class TopLevelSettings():
         '''
         Записывает в переменную язык
         '''
-        self.image_language=language
+        self.language=language
         #README удаляет последний символ переноса строки ОБЯЗАТЕЛЬНО ОСТАВИТЬ, ИНАЧЕ С КАЖДОЙ ПЕРЕЗАПИСЬЮ ОН НАЧНЁТ ДОБАВЛЯТЬ ДОПОЛНИТЕЛЬНИЙ СИМВОЛ ПЕРЕНОСА СТРОКИ
-        self.image_language[:-1]
+
+
         
 
     def change_color(self,color):
@@ -84,7 +86,7 @@ class TopLevelSettings():
         записывает выбранные язык и цвет текста
         '''
         with open('settings.txt', 'w') as file:
-                file.write(self.image_language + '\n' + self.text_color)
+                file.write(self.language + '\n' + self.text_color)
         #уничтожает окно
         self.settings.destroy()
 
