@@ -31,7 +31,7 @@ class TopLevelSettings():
         except:
          self.language = 'eng'
          self.text_color = '#ffffff'
-         print(self.language)
+
 
         #проверяет цвет текста, чтобы не записывать его хеш кодом, для пользователя так будет удобнее(пока только 2 цвета, белый и фиолетовый)
         if self.text_color == '#ffffff' or self.text_color == '#FFFFFF':
