@@ -1,5 +1,5 @@
 # по сути библиотеки, чтобы забрать изображение и перевести его в текст
-from PIL import Image, ImageGrab
+from PIL import Image, ImageGrab, ImageFilter, ImageEnhance
 import pytesseract
 from deep_translator import GoogleTranslator
 
@@ -16,6 +16,16 @@ class Translate():
       #переводит изображение в формат который читает tesseract, нужен для того чтобы pytesseract мог работать с alt+prtsc
       #из-за того что он сохраняет данные в bitmap(если не ошибаюсь), а не png
       self.text_from_img = self.img.convert("RGB")
+      
+      #подсмотрел это решение, чтобы изображение лучше переводилось в текст
+      self.img = self.img.convert('L')
+
+
+      self.img = self.img.filter(ImageFilter.MedianFilter())
+
+
+      self.enhancer = ImageEnhance.Contrast(self.img)
+      self.img = self.enhancer.enhance(2)
 
       #переводит изображение в текст
       self.text = pytesseract.image_to_string(self.text_from_img, lang=f"{language_on_image}") 

@@ -26,6 +26,7 @@ class TopLevelSettings():
                   self.data_settings = file.readlines()
          #записывает переменные цвета текста и языки
          self.language = self.data_settings[0]
+         self.language = self.language[:-1]
          self.text_color = self.data_settings[1]
         #если не получилось, создаёт свои переменные для цвета текста и языка
         except:
