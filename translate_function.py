@@ -13,7 +13,7 @@ class Translate():
       #берет последнее изображение из clipboard
       self.img = ImageGrab.grabclipboard()
 
-      pytesseract.pytesseract.tesseract_cmd = r'D:\\programming\\Projects\\Auto translater\\tesseract\\tesseract.exe'
+      pytesseract.pytesseract.tesseract_cmd = r'tesseract\\tesseract.exe'
 
       #переводит изображение в формат который читает tesseract, нужен для того чтобы pytesseract мог работать с alt+prtsc
       #из-за того что он сохраняет данные в bitmap(если не ошибаюсь), а не png
